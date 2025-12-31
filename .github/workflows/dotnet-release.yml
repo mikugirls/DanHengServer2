@@ -1,0 +1,93 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET 发布
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: '发布名称'
+        required: true
+        default: ''
+      body:
+        description: '发布内容'
+        required: true
+        default: ''
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 配置 .NET 环境
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: 还原依赖
+      run: dotnet restore
+
+    - name: 发布 win-x64
+      run: dotnet publish Program/Program.csproj -o Release/win-x64 -r win-x64 --self-contained false --framework net9.0 -p:PublishSingleFile=true
+
+    - name: 发布 linux-x64
+      run: dotnet publish Program/Program.csproj -o Release/linux-x64 -r linux-x64 --self-contained false --framework net9.0 -p:PublishSingleFile=true
+
+    - name: 发布 linux-arm64
+      run: dotnet publish Program/Program.csproj -o Release/linux-arm64 -r linux-arm64 --self-contained false --framework net9.0 -p:PublishSingleFile=true
+
+    - name: 发布 win-x64 (独立运行)
+      run: dotnet publish Program/Program.csproj -o Release/win-x64-self-contained -r win-x64 --self-contained true --framework net9.0 -p:PublishSingleFile=true
+
+    - name: 发布 linux-x64 (独立运行)
+      run: dotnet publish Program/Program.csproj -o Release/linux-x64-self-contained -r linux-x64 --self-contained true --framework net9.0 -p:PublishSingleFile=true
+
+    - name: 发布 linux-arm64 (独立运行)
+      run: dotnet publish Program/Program.csproj -o Release/linux-arm64-self-contained -r linux-arm64 --self-contained true --framework net9.0 -p:PublishSingleFile=true
+
+    - name: 移除 PDB 文件
+      run: |
+           rm -rf Release/win-x64/*.pdb
+           rm -rf Release/linux-x64/*.pdb
+           rm -rf Release/linux-arm64/*.pdb
+           rm -rf Release/win-x64-self-contained/*.pdb
+           rm -rf Release/linux-x64-self-contained/*.pdb
+           rm -rf Release/linux-arm64-self-contained/*.pdb
+
+    - name: 压缩文件
+      run: |
+           mkdir z
+           cd Release
+           zip -r ../z/win-x64.zip win-x64/
+           zip -r ../z/linux-x64.zip linux-x64/
+           zip -r ../z/linux-arm64.zip linux-arm64/
+           zip -r ../z/win-x64-self-contained.zip win-x64-self-contained/
+           zip -r ../z/linux-x64-self-contained.zip linux-x64-self-contained/
+           zip -r ../z/linux-arm64-self-contained linux-arm64-self-contained/
+           cd ..
+
+    - name: 写入发布内容
+      run: |
+           echo -e "${{ inputs.body }}" > z/body.txt
+
+    - name: 发布 Release
+      uses: softprops/action-gh-release@v2
+      with:
+        body_path: z/body.txt
+        name: ${{ inputs.name }}
+        tag_name: Release-${{ github.sha }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        # upload except pdb file
+        files: |
+          z/win-x64.zip
+          z/linux-x64.zip
+          z/linux-arm64.zip
+          z/win-x64-self-contained.zip
+          z/linux-x64-self-contained.zip
+          z/linux-arm64-self-contained.zip
