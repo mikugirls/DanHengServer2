@@ -18,6 +18,7 @@ public class DispatchRoutes
     public static Logger Logger = new("DispatchServer");
 
     [HttpGet("query_dispatch")]
+    [HttpPost("query_dispatch")]
     public string QueryDispatch()
     {
         if (!Config.ServerOption.ServerConfig.RunDispatch)
