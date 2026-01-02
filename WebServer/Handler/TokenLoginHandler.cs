@@ -19,7 +19,7 @@ public class TokenLoginHandler
         else
         {
             res.message = "OK";
-            res.data = new VerifyData(account!.Uid.ToString(), account.Username + "@egglink.me", token);
+            res.data = new VerifyData(account!.Uid.ToString(), account.Username ?? "", token);
         }
 
         return new JsonResult(res);
