@@ -46,14 +46,6 @@ jobs:
     - name: 还原依赖
       run: dotnet restore
 
-    - name: 发布 win-x64
-      run: dotnet publish ${{ env.PROJECT_FILE }} -o Release/win-x64 -r win-x64 --self-contained false --framework ${{ env.TARGET_FRAMEWORK }} -p:PublishSingleFile=true
-
-    - name: 发布 linux-x64
-      run: dotnet publish ${{ env.PROJECT_FILE }} -o Release/linux-x64 -r linux-x64 --self-contained false --framework ${{ env.TARGET_FRAMEWORK }} -p:PublishSingleFile=true
-
-    - name: 发布 linux-arm64
-      run: dotnet publish ${{ env.PROJECT_FILE }} -o Release/linux-arm64 -r linux-arm64 --self-contained false --framework ${{ env.TARGET_FRAMEWORK }} -p:PublishSingleFile=true
 
     - name: 发布 win-x64 (独立运行)
       run: dotnet publish ${{ env.PROJECT_FILE }} -o Release/win-x64-self-contained -r win-x64 --self-contained true --framework ${{ env.TARGET_FRAMEWORK }} -p:PublishSingleFile=true
@@ -66,9 +58,7 @@ jobs:
 
     - name: 移除 PDB 文件
       run: |
-           rm -rf Release/win-x64/*.pdb
-           rm -rf Release/linux-x64/*.pdb
-           rm -rf Release/linux-arm64/*.pdb
+
            rm -rf Release/win-x64-self-contained/*.pdb
            rm -rf Release/linux-x64-self-contained/*.pdb
            rm -rf Release/linux-arm64-self-contained/*.pdb
@@ -77,9 +67,7 @@ jobs:
       run: |
            mkdir z
            cd Release
-           zip -r ../z/win-x64.zip win-x64/
-           zip -r ../z/linux-x64.zip linux-x64/
-           zip -r ../z/linux-arm64.zip linux-arm64/
+
            zip -r ../z/win-x64-self-contained.zip win-x64-self-contained/
            zip -r ../z/linux-x64-self-contained.zip linux-x64-self-contained/
            zip -r ../z/linux-arm64-self-contained linux-arm64-self-contained/
@@ -98,9 +86,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         # upload except pdb file
         files: |
-          z/win-x64.zip
-          z/linux-x64.zip
-          z/linux-arm64.zip
+
           z/win-x64-self-contained.zip
           z/linux-x64-self-contained.zip
           z/linux-arm64-self-contained.zip
