@@ -29,7 +29,7 @@ public class UsernameLoginHandler
         if (accountData != null)
         {
             res.message = "OK";
-            res.data = new VerifyData(accountData.Uid.ToString(), accountData.Username ?? "",
+            res.data = new VerifyData(accountData.Uid.ToString(), accountData.Username,
                 accountData.GenerateDispatchToken());
         }
 
