@@ -1,4 +1,4 @@
-﻿namespace EggLink.DanhengServer.Configuration;
+namespace EggLink.DanhengServer.Configuration;
 
 public class ConfigContainer
 {
@@ -67,9 +67,9 @@ public class DatabaseConfig
     public string DatabaseName { get; set; } = "danheng.db";
     public string MySqlHost { get; set; } = "127.0.0.1";
     public int MySqlPort { get; set; } = 3306;
-    public string MySqlUser { get; set; } = "danhengserver";
-    public string MySqlPassword { get; set; } = "danhengserver";
-    public string MySqlDatabase { get; set; } = "danhengserver";
+    public string MySqlUser { get; set; } = "root";
+    public string MySqlPassword { get; set; } = "123456";
+    public string MySqlDatabase { get; set; } = "danheng";
 }
 
 public class ServerOption
@@ -132,7 +132,7 @@ public class ServerAnnounce
 
 public class ServerProfile
 {
-    public string Name { get; set; } = "DanHengServer";
+    public string Name { get; set; } = "StopWuyu";
     public int Uid { get; set; } = 5201314;
     public string Signature { get; set; } = "Type /help for a list of commands";
     public int Level { get; set; } = 70;
