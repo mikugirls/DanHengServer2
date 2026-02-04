@@ -1,4 +1,4 @@
-﻿using EggLink.DanhengServer.Database.Account;
+using EggLink.DanhengServer.Database.Account;
 using EggLink.DanhengServer.Util;
 using EggLink.DanhengServer.WebServer.Objects;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,7 @@ public class UsernameLoginHandler
         if (accountData != null)
         {
             res.message = "OK";
-            res.data = new VerifyData(accountData.Uid.ToString(), accountData.Username,
+            res.data = new VerifyData(accountData.Uid.ToString(), accountData.Username + "@egglink.me",
                 accountData.GenerateDispatchToken());
         }
 
